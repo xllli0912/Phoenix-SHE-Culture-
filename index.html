@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>有凤来仪 · 河清畲鸣</title>
+    <style>
+        :root {
+            --bg: #fdf8f3;
+            --gold: #b8860b;
+            --gold-light: #d4a745;
+            --deep: #3d2b1f;
+            --cream: #fef9f0;
+            --text: #4a3728;
+            --text-light: #6b5d4f;
+            --border: #e8d5b7;
+            --shadow: 0 4px 20px rgba(139, 90, 43, 0.08);
+            --shadow-hover: 0 12px 36px rgba(139, 90, 43, 0.15);
+            --radius: 14px;
+            --transition: 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: "Noto Serif SC", "STSong", "Songti SC", "SimSun", "PingFang SC", "Microsoft YaHei", serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            pointer-events: none; z-index:0;
+            background: radial-gradient(ellipse at 15% 10%, rgba(212,167,69,0.04) 0%, transparent 55%),
+                        radial-gradient(ellipse at 78% 92%, rgba(184,134,11,0.03) 0%, transparent 55%),
+                        radial-gradient(ellipse at 50% 50%, rgba(61,43,31,0.015) 0%, transparent 70%);
+        }
+        .navbar {
+            position: fixed; top:0; left:0; width:100%; z-index:1000;
+            background: rgba(253,248,243,0.78);
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition); padding: 0 2rem;
+        }
+        .navbar.scrolled { background: rgba(253,248,243,0.94); box-shadow: 0 2px 24px rgba(139,90,43,0.08); }
+        .nav-inner {
+            max-width:1200px; margin:0 auto; display:flex; align-items:center;
+            justify-content:space-between; height:68px;
+        }
+        .nav-brand {
+            font-size:1.35rem; font-weight:700; letter-spacing:0.06em;
+            color:var(--deep); text-decoration:none; white-space:nowrap;
+            transition:var(--transition); cursor:pointer; display:flex; align-items:center; gap:0.4rem;
+        }
+        .nav-brand .brand-icon {
+            width:32px; height:32px; background:linear-gradient(135deg, var(--gold-light), var(--gold));
+            border-radius:50%; position:relative; flex-shrink:0;
+        }
+        .nav-brand .brand-icon::after {
+            content:'凤'; position:absolute; inset:0;
+            display:flex; align-items:center; justify-content:center;
+            color:#fff; font-size:0.8rem; font-weight:700;
+        }
+        .nav-links { display:flex; list-style:none; gap:0.3rem; align-items:center; }
+        .nav-links li a {
+            text-decoration:none; color:var(--text); padding:0.6rem 1.3rem;
+            border-radius:30px; font-size:0.95rem; letter-spacing:0.04em;
+            transition:var(--transition); position:relative; font-weight:500; cursor:pointer; white-space:nowrap;
+        }
+        .nav-links li a:hover, .nav-links li a.active { color:var(--gold); background:rgba(184,134,11,0.06); }
+        .nav-links li a.active { font-weight:700; }
+        .nav-links li a::after {
+            content:''; position:absolute; bottom:4px; left:50%;
+            transform:translateX(-50%) scaleX(0); width:20px; height:2px;
+            background:var(--gold); border-radius:2px; transition:transform 0.3s ease;
+        }
+        .nav-links li a:hover::after, .nav-links li a.active::after { transform:translateX(-50%) scaleX(1); }
+        .hamburger { display:none; flex-direction:column; gap:6px; cursor:pointer; padding:8px; z-index:1001; background:none; border:none; }
+        .hamburger span { width:26px; height:2.5px; background:var(--deep); border-radius:3px; transition:var(--transition); display:block; }
+        .hamburger.active span:nth-child(1) { transform:rotate(45deg) translate(6px,6px); }
+        .hamburger.active span:nth-child(2) { opacity:0; }
+        .hamburger.active span:nth-child(3) { transform:rotate(-45deg) translate(6px,-6px); }
+        .main-content { position:relative; z-index:1; padding-top:68px; min-height:100vh; }
+        .page-section { display:none; animation:fadeSlideIn 0.5s ease forwards; padding:2rem 2rem 4rem; max-width:1100px; margin:0 auto; }
+        .page-section.active { display:block; }
+        @keyframes fadeSlideIn { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+        .hero-section { text-align:center; padding:5rem 2rem 4rem; }
+        .hero-ornament-top { font-size:2.8rem; color:var(--gold-light); letter-spacing:0.15em; opacity:0.7; margin-bottom:0.5rem; animation:floatGentle 4s ease-in-out infinite; }
+        @keyframes floatGentle { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+        .hero-title { font-size:clamp(2.6rem,6vw,4.2rem); font-weight:900; letter-spacing:0.1em; color:var(--deep); margin-bottom:0.3rem; line-height:1.3; }
+        .hero-title .highlight { display:inline-block; background:linear-gradient(180deg, transparent 55%, rgba(212,167,69,0.25) 55%); padding:0 0.15em; }
+        .hero-subtitle { font-size:1.2rem; color:var(--text-light); letter-spacing:0.12em; margin-bottom:2.5rem; font-weight:400; }
+        .hero-divider { width:80px; height:2px; background:linear-gradient(90deg, transparent, var(--gold), transparent); margin:0 auto 2rem; border-radius:2px; }
+        .hero-desc { font-size:1.05rem; color:var(--text-light); max-width:580px; margin:0 auto 3rem; line-height:2; letter-spacing:0.03em; }
+        .hero-badge-row { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+        .hero-badge { display:inline-block; padding:0.6rem 1.6rem; border:1px solid var(--border); border-radius:30px; font-size:0.9rem; letter-spacing:0.06em; color:var(--text); background:var(--cream); transition:var(--transition); cursor:default; }
+        .hero-badge:hover { border-color:var(--gold-light); color:var(--gold); box-shadow:var(--shadow); }
+        .phoenix-line { display:flex; align-items:center; justify-content:center; gap:1rem; margin:3rem auto 0; max-width:400px; opacity:0.5; }
+        .phoenix-line .wing { flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--gold-light), transparent); }
+        .phoenix-line .dot { width:6px; height:6px; background:var(--gold); border-radius:50%; flex-shrink:0; }
+        .section-header { text-align:center; margin-bottom:2.5rem; }
+        .section-header h2 { font-size:2rem; letter-spacing:0.08em; color:var(--deep); margin-bottom:0.4rem; }
+        .section-header .section-divider { width:50px; height:2px; background:var(--gold); margin:0 auto; border-radius:2px; }
+        .section-header .section-sub { color:var(--text-light); font-size:0.95rem; letter-spacing:0.05em; margin-top:0.5rem; }
+        .articles-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap:1.6rem; }
+        .article-card { background:var(--cream); border:1px solid var(--border); border-radius:var(--radius); padding:1.6rem 1.8rem; transition:var(--transition); cursor:pointer; text-decoration:none; color:inherit; display:flex; flex-direction:column; gap:0.8rem; position:relative; overflow:hidden; box-shadow:var(--shadow); }
+        .article-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-hover); border-color:var(--gold-light); }
+        .article-card .card-tag { display:inline-block; font-size:0.75rem; letter-spacing:0.08em; color:var(--gold); background:rgba(184,134,11,0.07); padding:0.3rem 0.8rem; border-radius:20px; align-self:flex-start; font-weight:600; }
+        .article-card h3 { font-size:1.2rem; letter-spacing:0.04em; color:var(--deep); line-height:1.5; font-weight:700; }
+        .article-card p { font-size:0.9rem; color:var(--text-light); line-height:1.6; flex-grow:1; }
+        .article-card .card-meta { font-size:0.8rem; color:#a08c70; letter-spacing:0.04em; display:flex; align-items:center; gap:0.5rem; }
+        .article-card .card-arrow { align-self:flex-end; font-size:1.3rem; color:var(--gold-light); transition:var(--transition); }
+        .article-card:hover .card-arrow { transform:translateX(6px); color:var(--gold); }
+        .wechat-badge { display:inline-flex; align-items:center; gap:0.4rem; background:#07c160; color:#fff; padding:0.35rem 0.9rem; border-radius:20px; font-size:0.78rem; letter-spacing:0.04em; font-weight:600; }
+        .video-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap:1.8rem; }
+        .video-card { background:var(--cream); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:var(--transition); box-shadow:var(--shadow); cursor:pointer; }
+        .video-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-hover); border-color:var(--gold-light); }
+        .video-thumb { width:100%; aspect-ratio:16/9; background:linear-gradient(135deg, #e8d5b7 0%, #d4c3a3 30%, #c7b18a 60%, #e0d0b5 100%); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+        .video-thumb .play-btn { width:56px; height:56px; background:rgba(255,255,255,0.9); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:var(--deep); transition:var(--transition); box-shadow:0 4px 16px rgba(0,0,0,0.1); z-index:2; }
+        .video-card:hover .play-btn { background:#fff; transform:scale(1.08); box-shadow:0 8px 28px rgba(0,0,0,0.18); }
+        .video-thumb .thumb-pattern { position:absolute; inset:0; opacity:0.3; background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.5) 0%, transparent 40%), radial-gradient(circle at 70% 60%, rgba(184,134,11,0.2) 0%, transparent 35%); }
+        .video-info { padding:1.2rem 1.5rem; }
+        .video-info h3 { font-size:1.1rem; letter-spacing:0.04em; color:var(--deep); margin-bottom:0.4rem; font-weight:700; }
+        .video-info .video-duration { font-size:0.8rem; color:#a08c70; letter-spacing:0.04em; }
+        .contact-wrapper { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; align-items:start; }
+        .contact-info { display:flex; flex-direction:column; gap:1.6rem; }
+        .contact-info-item { display:flex; align-items:flex-start; gap:1rem; padding:1.2rem 1.5rem; background:var(--cream); border-radius:var(--radius); border:1px solid var(--border); transition:var(--transition); }
+        .contact-info-item:hover { border-color:var(--gold-light); box-shadow:var(--shadow); }
+        .contact-icon { font-size:1.6rem; flex-shrink:0; width:44px; height:44px; background:rgba(184,134,11,0.08); border-radius:50%; display:flex; align-items:center; justify-content:center; }
+        .contact-info-item h4 { font-size:1rem; letter-spacing:0.04em; color:var(--deep); margin-bottom:0.2rem; }
+        .contact-info-item span { font-size:0.9rem; color:var(--text-light); }
+        .contact-form-card { background:var(--cream); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; box-shadow:var(--shadow); }
+        .contact-form-card h3 { font-size:1.3rem; letter-spacing:0.05em; color:var(--deep); margin-bottom:1.5rem; text-align:center; }
+        .form-group { margin-bottom:1.2rem; }
+        .form-group label { display:block; font-size:0.85rem; letter-spacing:0.05em; color:var(--text); margin-bottom:0.35rem; font-weight:600; }
+        .form-group input, .form-group textarea { width:100%; padding:0.75rem 1rem; border:1px solid var(--border); border-radius:10px; font-family:inherit; font-size:0.95rem; background:#fffdf9; color:var(--text); transition:var(--transition); resize:vertical; letter-spacing:0.03em; }
+        .form-group input:focus, .form-group textarea:focus { outline:none; border-color:var(--gold-light); box-shadow:0 0 0 4px rgba(184,134,11,0.06); }
+        .btn-submit { display:inline-block; padding:0.8rem 2.4rem; background:linear-gradient(135deg, var(--gold-light), var(--gold)); color:#fff; border:none; border-radius:30px; font-size:1rem; letter-spacing:0.08em; font-weight:700; cursor:pointer; transition:var(--transition); font-family:inherit; width:100%; text-align:center; }
+        .btn-submit:hover { opacity:0.9; box-shadow:0 8px 28px rgba(184,134,11,0.25); transform:translateY(-2px); }
+        .site-footer { text-align:center; padding:2rem; font-size:0.8rem; color:#b8a58a; letter-spacing:0.06em; position:relative; z-index:1; border-top:1px solid var(--border); margin-top:2rem; }
+        @media (max-width:768px) {
+            .nav-links { position:fixed; top:0; right:-100%; width:260px; height:100vh; flex-direction:column; background:rgba(253,248,243,0.97); backdrop-filter:blur(20px); padding:5rem 2rem 2rem; gap:0.6rem; transition:var(--transition); box-shadow:-6px 0 30px rgba(0,0,0,0.08); align-items:stretch; }
+            .nav-links.open { right:0; }
+            .nav-links li a { display:block; text-align:center; padding:0.8rem; font-size:1.05rem; }
+            .hamburger { display:flex; }
+            .contact-wrapper { grid-template-columns:1fr; }
+            .hero-title { font-size:2rem; }
+            .page-section { padding:1.5rem 1rem 3rem; }
+            .articles-grid, .video-grid { grid-template-columns:1fr; }
+            .hero-section { padding:3rem 1rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a class="nav-brand" onclick="navigateTo('home')" title="返回首页">
+                <span class="brand-icon"></span> 有凤来仪
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a data-page="home" onclick="navigateTo('home')" class="active">首 页</a></li>
+                <li><a data-page="articles" onclick="navigateTo('articles')">文 章</a></li>
+                <li><a data-page="videos" onclick="navigateTo('videos')">视 频</a></li>
+                <li><a data-page="contact" onclick="navigateTo('contact')">联系我们</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- 首页 -->
+        <section class="page-section active" id="page-home">
+            <div class="hero-section">
+                <div class="hero-ornament-top">✦ ✦ ✦</div>
+                <h1 class="hero-title">有凤来仪 <span class="highlight">河清畲鸣</span></h1>
+                <p class="hero-subtitle">凤栖梧桐 · 畲韵悠长</p>
+                <div class="hero-divider"></div>
+                <p class="hero-desc">以凤鸟之姿，承畲乡之韵。<br>在山水之间，聆听文化回响，记录民族记忆中的温润时光。</p>
+                <div class="hero-badge-row">
+                    <span class="hero-badge">🌿 畲族文化</span>
+                    <span class="hero-badge">🕊️ 非遗传承</span>
+                    <span class="hero-badge">📖 人文记录</span>
+                    <span class="hero-badge">🎋 山水之间</span>
+                </div>
+                <div class="phoenix-line">
+                    <span class="wing"></span><span class="dot"></span><span class="wing"></span>
+                    <span class="dot"></span><span class="wing"></span><span class="dot"></span><span class="wing"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 文章页 -->
+        <section class="page-section" id="page-articles">
+            <div class="section-header">
+                <h2>📝 文 章</h2>
+                <div class="section-divider"></div>
+                <p class="section-sub">微信公众号文章精选 · 点击跳转阅读</p>
+            </div>
+            <div class="articles-grid" id="articlesGrid"></div>
+        </section>
+
+        <!-- 视频页 -->
+        <section class="page-section" id="page-videos">
+            <div class="section-header">
+                <h2>🎬 视 频</h2>
+                <div class="section-divider"></div>
+                <p class="section-sub">影像记录 · 畲乡风物</p>
+            </div>
+            <div class="video-grid" id="videosGrid"></div>
+        </section>
+
+        <!-- 联系我们 -->
+        <section class="page-section" id="page-contact">
+            <div class="section-header">
+                <h2>📬 联系我们</h2>
+                <div class="section-divider"></div>
+                <p class="section-sub">期待与您交流，共赏畲韵之美</p>
+            </div>
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <div class="contact-info-item">
+                        <div class="contact-icon">💬</div>
+                        <div>
+                            <h4>微信公众号</h4>
+                            <span>凤凰来仪河清畲鸣</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form-card">
+                    <h3>✉️ 发送消息</h3>
+                    <form id="contactForm" onsubmit="handleSubmit(event)">
+                        <div class="form-group">
+                            <label for="name">您的名字</label>
+                            <input type="text" id="name" placeholder="请输入您的名字" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">电子邮箱</label>
+                            <input type="email" id="email" placeholder="请输入您的邮箱" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">留言内容</label>
+                            <textarea id="message" rows="4" placeholder="写下您想说的话..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">🕊️ 发送留言</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="site-footer">
+        © 2024 有凤来仪 · 河清畲鸣 &nbsp;|&nbsp; 凤栖梧桐，畲韵绵长
+    </footer>
+
+    <script>
+        // ============ 文章数据：仅展示三篇公众号文章 ============
+        const articlesData = [
+            {
+                tag: '畲族文化',
+                title: '一羽凤凰，千年畲乡 ——走进闽东畲族的民族记忆与文化密码',
+                desc: '一只凤凰，承载着畲族千年的迁徙记忆与文化认同。走进闽东畲乡，探寻隐于山水间的民族密码。',
+                date: '2024-12-20',
+                link: 'https://mp.weixin.qq.com/s/iSroTvme09uo6rdCcTuzew'
+            },
+            {
+                tag: '凤凰装',
+                title: '凤凰为衣，信仰为骨 ——畲族凤凰装里的文化密码与女性叙事',
+                desc: '凤凰装不只是服饰，更是畲族女性的身份史诗。解读针线间的信仰、禁忌与女性力量。',
+                date: '2024-11-10',
+                link: 'https://mp.weixin.qq.com/s/GZN2dAEDurvnu1KNvE82zA'
+            },
+            {
+                tag: '节日民俗',
+                title: '山歌起时，春意正浓——走进畲族“三月三”节日记忆',
+                desc: '乌饭飘香，山歌对唱。在畲族最盛大的“三月三”节日里，感受春日的民族狂欢与文化传承。',
+                date: '2024-10-05',
+                link: 'https://mp.weixin.qq.com/s/qmTCGQ1romV9dfbzX26CRA'
+            }
+        ];
+
+        // ============ 视频数据：暂无内容 ============
+        const videosData = [];
+
+        // 渲染文章卡片
+        function renderArticles() {
+            const grid = document.getElementById('articlesGrid');
+            grid.innerHTML = articlesData.map(a => `
+                <a href="${a.link}" target="_blank" rel="noopener noreferrer" class="article-card" title="点击跳转至微信公众号阅读全文">
+                    <span class="card-tag">${a.tag}</span>
+                    <h3>${a.title}</h3>
+                    <p>${a.desc}</p>
+                    <div class="card-meta">
+                        <span>📅 ${a.date}</span>
+                        <span class="wechat-badge">微信阅读</span>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+            `).join('');
+        }
+
+        // 渲染视频区域（无内容时显示占位提示）
+        function renderVideos() {
+            const grid = document.getElementById('videosGrid');
+            if (videosData.length === 0) {
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem 2rem; color:var(--text-light); font-size:1rem; letter-spacing:0.05em; background:var(--cream); border-radius:var(--radius); border:1px dashed var(--border);">
+                    📹 视频内容即将上线，敬请期待。
+                </div>`;
+                return;
+            }
+            grid.innerHTML = videosData.map(v => `
+                <div class="video-card" onclick="alert('视频演示：${v.title}\\n时长：${v.duration}')" title="点击播放视频">
+                    <div class="video-thumb">
+                        <div class="thumb-pattern"></div>
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <h3>${v.title}</h3>
+                        <span class="video-duration">⏱ ${v.duration}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 页面导航
+        function navigateTo(pageName) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById('page-' + pageName);
+            if (target) {
+                target.classList.add('active');
+                target.style.animation = 'none';
+                target.offsetHeight;
+                target.style.animation = 'fadeSlideIn 0.5s ease forwards';
+            }
+            document.querySelectorAll('.nav-links li a').forEach(a => a.classList.remove('active'));
+            const navLink = document.querySelector(`.nav-links li a[data-page="${pageName}"]`);
+            if (navLink) navLink.classList.add('active');
+            const navLinks = document.getElementById('navLinks');
+            const hamburger = document.getElementById('hamburger');
+            if (navLinks.classList.contains('open')) {
+                navLinks.classList.remove('open');
+                hamburger.classList.remove('active');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 移动端菜单
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+            hamburger.classList.toggle('active');
+        });
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-links') && !e.target.closest('.hamburger')) {
+                navLinks.classList.remove('open');
+                hamburger.classList.remove('active');
+            }
+        });
+
+        // 导航栏阴影
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+        });
+
+        // 表单提交
+        function handleSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            if (name && email && message) {
+                alert(`🕊️ 感谢您的留言，${name}！\n\n您的消息已收到，我们会尽快通过邮箱（${email}）与您联系。\n\n—— 有凤来仪 · 河清畲鸣`);
+                document.getElementById('contactForm').reset();
+            }
+        }
+
+        // 初始化
+        function init() {
+            renderArticles();
+            renderVideos();
+        }
+        document.addEventListener('DOMContentLoaded', init);
+
+        // 键盘导航
+        document.addEventListener('keydown', (e) => {
+            const pages = ['home', 'articles', 'videos', 'contact'];
+            const current = document.querySelector('.nav-links li a.active')?.getAttribute('data-page') || 'home';
+            const idx = pages.indexOf(current);
+            if (e.key === 'ArrowRight' && idx < pages.length - 1) { e.preventDefault(); navigateTo(pages[idx + 1]); }
+            else if (e.key === 'ArrowLeft' && idx > 0) { e.preventDefault(); navigateTo(pages[idx - 1]); }
+        });
+    </script>
+</body>
+</html>
